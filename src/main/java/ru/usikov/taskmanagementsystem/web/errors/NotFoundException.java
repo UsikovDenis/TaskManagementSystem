@@ -1,4 +1,4 @@
-package ru.usikov.taskmanagementsystem.errors;
+package ru.usikov.taskmanagementsystem.web.errors;
 
 import org.springframework.http.HttpStatus;
 

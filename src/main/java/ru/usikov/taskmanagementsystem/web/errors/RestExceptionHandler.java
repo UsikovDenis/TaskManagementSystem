@@ -1,4 +1,4 @@
-package ru.usikov.taskmanagementsystem.errors;
+package ru.usikov.taskmanagementsystem.web.errors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

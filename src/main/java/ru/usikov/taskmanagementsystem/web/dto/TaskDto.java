@@ -1,9 +1,9 @@
-package ru.usikov.taskmanagementsystem.dto;
+package ru.usikov.taskmanagementsystem.web.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import ru.usikov.taskmanagementsystem.domain.entities.dictionary.TaskPriority;
-import ru.usikov.taskmanagementsystem.domain.entities.dictionary.TaskStatus;
+import ru.usikov.taskmanagementsystem.entities.task.TaskPriority;
+import ru.usikov.taskmanagementsystem.entities.task.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,6 +35,9 @@ public class TaskDto {
 
     @Schema(description = "Приоретет")
     private TaskPriority priority;
+
+    @Schema(description = "Дата окончания срока")
+    private LocalDateTime expirationDate;
 
     @Schema(description = "Дата создания")
     private LocalDateTime createDate;

@@ -1,4 +1,4 @@
-package ru.usikov.taskmanagementsystem.api.controller;
+package ru.usikov.taskmanagementsystem.web.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,13 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.usikov.taskmanagementsystem.dto.TaskDto;
+import ru.usikov.taskmanagementsystem.web.dto.TaskDto;
 import ru.usikov.taskmanagementsystem.service.TaskService;
 
 import java.util.List;
 import java.util.UUID;
 
-import static ru.usikov.taskmanagementsystem.api.ApiMessageConstants.*;
+import static ru.usikov.taskmanagementsystem.web.ApiMessageConstants.*;
 
 @RequiredArgsConstructor
 @RestController

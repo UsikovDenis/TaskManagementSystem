@@ -1,20 +1,18 @@
 package ru.usikov.taskmanagementsystem.service;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.usikov.taskmanagementsystem.domain.entities.Task;
-import ru.usikov.taskmanagementsystem.domain.repository.TaskRepository;
-import ru.usikov.taskmanagementsystem.dto.TaskDto;
-import ru.usikov.taskmanagementsystem.errors.NotFoundException;
-import ru.usikov.taskmanagementsystem.mapper.TaskMapper;
-
+import ru.usikov.taskmanagementsystem.entities.task.Task;
+import ru.usikov.taskmanagementsystem.repository.TaskRepository;
+import ru.usikov.taskmanagementsystem.web.dto.TaskDto;
+import ru.usikov.taskmanagementsystem.web.errors.NotFoundException;
+import ru.usikov.taskmanagementsystem.web.mapper.TaskMapper;
 
 import java.util.List;
 import java.util.UUID;
 
-import static ru.usikov.taskmanagementsystem.api.ApiMessageConstants.NOT_FOUND_TASK;
+import static ru.usikov.taskmanagementsystem.web.ApiMessageConstants.NOT_FOUND_TASK;
 
 @Service
 @RequiredArgsConstructor

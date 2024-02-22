@@ -1,4 +1,4 @@
-package ru.usikov.taskmanagementsystem.api;
+package ru.usikov.taskmanagementsystem.web;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
