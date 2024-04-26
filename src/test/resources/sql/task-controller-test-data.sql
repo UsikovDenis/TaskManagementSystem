@@ -1,0 +1,10 @@
+-- INSERT INTO api_user (id, name, email, password)
+-- VALUES ('525257ce-7bde-4b68-bce0-4c200a6167dc', 'user1', 'user1@example.com', 'password1');
+--
+-- INSERT INTO task (id, title, description, status, priority, create_date, user_author_id)
+-- VALUES ('550e8400-e29b-41d4-a716-446655440000', 'Task 1', 'Description 1', 'WAITING',
+--         'HIGH', current_timestamp, '525257ce-7bde-4b68-bce0-4c200a6167dc'),
+--        ('7c9e6679-7425-40de-944b-e07fc1f90ae7', 'Task 2', 'Description 2', 'WAITING',
+--         'AVERAGE', current_timestamp, '525257ce-7bde-4b68-bce0-4c200a6167dc'),
+--        ('123e4567-e89b-12d3-a456-426614174000', 'Task 3', 'Description 3', 'WAITING',
+--         'LOW', current_timestamp, '525257ce-7bde-4b68-bce0-4c200a6167dc');
