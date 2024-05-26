@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.usikov.taskmanagementsystem.entities.user.UserRole;
 import ru.usikov.taskmanagementsystem.web.dto.task.TaskDto;
 import ru.usikov.taskmanagementsystem.service.TaskService;
 
@@ -62,6 +64,7 @@ public class TaskController {
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN, content = @Content())
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = NOT_FOUND_TASK, content = @Content())
     @PutMapping("/{id}")
+    @PreAuthorize("canAccessTask(#id)")
     public UUID update(@PathVariable final UUID id, @RequestBody final TaskDto taskDto) {
         taskDto.setId(id);
         return taskService.saveOrUpdate(taskDto);

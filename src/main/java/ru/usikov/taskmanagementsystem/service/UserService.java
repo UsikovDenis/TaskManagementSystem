@@ -1,150 +1,65 @@
 package ru.usikov.taskmanagementsystem.service;
 
-import com.example.tasklist.domain.MailType;
-import com.example.tasklist.domain.exception.ResourceNotFoundException;
-import com.example.tasklist.domain.user.Role;
-import com.example.tasklist.domain.user.User;
-import com.example.tasklist.repository.UserRepository;
-import com.example.tasklist.service.MailService;
-import com.example.tasklist.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.usikov.taskmanagementsystem.entities.task.Task;
+import ru.usikov.taskmanagementsystem.entities.user.User;
+import ru.usikov.taskmanagementsystem.repository.UserRepository;
+import ru.usikov.taskmanagementsystem.web.ApiMessageConstants;
+import ru.usikov.taskmanagementsystem.web.dto.user.UserCreateRequest;
+import ru.usikov.taskmanagementsystem.web.dto.user.UserDto;
+import ru.usikov.taskmanagementsystem.web.errors.NotFoundException;
+import ru.usikov.taskmanagementsystem.web.mapper.UserMapper;
 
-import java.util.Properties;
-import java.util.Set;
+import java.util.UUID;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService implements UserService {
+public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final MailService mailService;
+    private final UserMapper userMapper;
 
-    @Override
-    @Cacheable(
-            value = "UserService::getById",
-            key = "#id"
-    )
-    public User getById(
-            final Long id
-    ) {
-        return userRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
+    @Transactional
+    public boolean isTaskOwner(UUID userId, UUID taskId) {
+        User user = findById(userId);
+
+        return user.getAuthorTasks().stream()
+                .anyMatch(task -> task.getId().equals(taskId));
     }
 
-    @Override
-    @Cacheable(
-            value = "UserService::getByUsername",
-            key = "#username"
-    )
-    public User getByUsername(
-            final String username
-    ) {
+    @Transactional
+    public User findById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ApiMessageConstants.NOT_FOUND_USER));
+    }
+
+    @Transactional
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
+                .orElseThrow(() -> new NotFoundException(ApiMessageConstants.NOT_FOUND_USER));
     }
 
-    @Override
     @Transactional
-    @Caching(put = {
-            @CachePut(
-                    value = "UserService::getById",
-                    key = "#user.id"
-            ),
-            @CachePut(
-                    value = "UserService::getByUsername",
-                    key = "#user.username"
-            )
-    })
-    public User update(
-            final User user
-    ) {
-        User existing = getById(user.getId());
-        existing.setName(user.getName());
-        user.setUsername(user.getUsername());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return user;
+    public UserDto getByUsername(String username) {
+        return userMapper.toDto(findByUsername(username));
     }
 
-    @Override
     @Transactional
-    @Caching(cacheable = {
-            @Cacheable(
-                    value = "UserService::getById",
-                    condition = "#user.id!=null",
-                    key = "#user.id"
-            ),
-            @Cacheable(
-                    value = "UserService::getByUsername",
-                    condition = "#user.username!=null",
-                    key = "#user.username"
-            )
-    })
-    public User create(
-            final User user
-    ) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new IllegalStateException("User already exists.");
-        }
-        if (!user.getPassword().equals(user.getPasswordConfirmation())) {
-            throw new IllegalStateException(
-                    "Password and password confirmation do not match."
-            );
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Set<Role> roles = Set.of(Role.ROLE_USER);
-        user.setRoles(roles);
-        userRepository.save(user);
-        mailService.sendEmail(user, MailType.REGISTRATION, new Properties());
-        return user;
+    public UserDto create(UserCreateRequest userCreateRequest) {
+        User user = userMapper.toEntity(userCreateRequest);
+        user.setPasswordHash(userCreateRequest.getPasswordHash());
+        user = userRepository.save(user);
+        return userMapper.toDto(user);
     }
 
-    @Override
-    @Cacheable(
-            value = "UserService::isTaskOwner",
-            key = "#userId + '.' + #taskId"
-    )
-    public boolean isTaskOwner(
-            final Long userId,
-            final Long taskId
-    ) {
-        return userRepository.isTaskOwner(userId, taskId);
-    }
-
-    @Override
-    @Cacheable(
-            value = "UserService::getTaskAuthor",
-            key = "#taskId"
-    )
-    public User getTaskAuthor(
-            final Long taskId
-    ) {
-        return userRepository.findTaskAuthor(taskId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
-    }
-
-    @Override
     @Transactional
-    @CacheEvict(
-            value = "UserService::getById",
-            key = "#id"
-    )
-    public void delete(
-            final Long id
-    ) {
-        userRepository.deleteById(id);
+    public UserDto changePassword(String username, String newPasswordHash) {
+        User user = findByUsername(username);
+        user.setPasswordHash(newPasswordHash);
+        return userMapper.toDto(user);
     }
 
 }

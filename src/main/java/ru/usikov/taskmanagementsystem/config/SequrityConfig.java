@@ -1,9 +1,6 @@
 package ru.usikov.taskmanagementsystem.config;
 
 
-import ru.usikov.taskmanagementsystem.web.security.JwtTokenFilter;
-import ru.usikov.taskmanagementsystem.web.security.JwtTokenProvider;
-import ru.usikov.taskmanagementsystem.web.security.expression.CustomSecurityExceptionHandler;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -29,16 +26,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.usikov.taskmanagementsystem.web.security.JwtTokenFilter;
+import ru.usikov.taskmanagementsystem.web.security.JwtTokenProvider;
+import ru.usikov.taskmanagementsystem.web.security.expression.CustomSecurityExceptionHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
-public class ApplicationConfig {
+public class SequrityConfig {
 
     private final JwtTokenProvider tokenProvider;
     private final ApplicationContext applicationContext;
-//    private final MinioProperties minioProperties;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,14 +61,7 @@ public class ApplicationConfig {
         return expressionHandler;
     }
 
-//    @Bean
-//    public MinioClient minioClient() {
-//        return MinioClient.builder()
-//                .endpoint(minioProperties.getUrl())
-//                .credentials(minioProperties.getAccessKey(),
-//                        minioProperties.getSecretKey())
-//                .build();
-//    }
+
 
     @Bean
     public OpenAPI openAPI() {
@@ -126,7 +119,7 @@ public class ApplicationConfig {
                                                     .write("Unauthorized.");
                                         }))
                 .authorizeHttpRequests(configurer ->
-                        configurer.requestMatchers("/api/v1/auth/**")
+                        configurer.requestMatchers("/authorize/**")
                                 .permitAll()
                                 .requestMatchers("/swagger-ui/**")
                                 .permitAll()
@@ -136,8 +129,7 @@ public class ApplicationConfig {
                                 .permitAll()
                                 .anyRequest().authenticated())
                 .anonymous(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtTokenFilter(tokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

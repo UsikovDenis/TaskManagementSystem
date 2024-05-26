@@ -33,10 +33,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    private String passwordConfirmation;
+    private String passwordHash;
 
     @Column(name = "role", length = 20)
     @ElementCollection(fetch = FetchType.EAGER)
