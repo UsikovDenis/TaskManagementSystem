@@ -7,9 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import ru.usikov.taskmanagementsystem.entities.user.UserRole;
 import ru.usikov.taskmanagementsystem.web.dto.validdation.OnCreate;
 import ru.usikov.taskmanagementsystem.web.dto.validdation.OnUpdate;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -46,15 +48,5 @@ public class UserDto {
             groups = {OnCreate.class, OnUpdate.class})
     private String email;
 
-    @Schema(description = "пароль")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @NotNull(message = "Password must be not null.",
-            groups = {OnCreate.class, OnUpdate.class})
-    private String password;
-
-    @Schema(description = "Подтверждение пароля")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @NotNull(message = "Password confirmation must be not null.",
-            groups = {OnCreate.class})
-    private String passwordConfirmation;
+    private Set<UserRole> roles;
 }

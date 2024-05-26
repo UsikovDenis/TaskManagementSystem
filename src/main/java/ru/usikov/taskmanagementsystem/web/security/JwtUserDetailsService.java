@@ -1,11 +1,11 @@
 package ru.usikov.taskmanagementsystem.web.security;
 
-import com.example.tasklist.domain.user.User;
-import com.example.tasklist.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import ru.usikov.taskmanagementsystem.entities.user.User;
+import ru.usikov.taskmanagementsystem.service.UserService;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) {
-        User user = userService.getByUsername(username);
+        User user = userService.findByUsername(username);
         return JwtEntityFactory.create(user);
     }
 
